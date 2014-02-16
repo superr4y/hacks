@@ -14,7 +14,7 @@ Requirements:
 Install:
 - install winpcap
 - gem install ffi-pcap
-- git clone https://github.com/superr4y/hacks/spotify
+- git clone https://github.com/superr4y/hacks.git
 
 
 Usage:
