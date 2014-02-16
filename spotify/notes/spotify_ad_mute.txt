@@ -1,0 +1,16 @@
+Keycodes windows api:
+http://msdn.microsoft.com/en-us/library/windows/desktop/dd375731%28v=vs.85%29.aspx
+
+Mute Windows over Powershell:
+$obj = new-object -com wscript.shell 
+$obj.SendKeys([char]173)
+
+Wireshark (pcap?) Filter:
+rtmpt.header.typeid == 0x11
+
+Ruby packet sniffing:
+http://rubygems.org/gems/packetfu
+
+
+Sniffing with tshark:
+"C:\Program Files\Wireshark\tshark.exe" -R "rtmpt.header.typeid == 0x11"
