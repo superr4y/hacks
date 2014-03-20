@@ -15,7 +15,7 @@ pcap.loop() do |this,pkt|
         puts 'mute'
         `powershell -Command "(new-object -com wscript.shell).SendKeys([char]173)"`
       end
-    mute+=1
+      mute+=1
     elsif mute == 2
       mute = 0
       puts 'unmute'
