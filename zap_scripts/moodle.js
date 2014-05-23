@@ -5,18 +5,22 @@
 
 // Note that new proxy scripts will initially be disabled
 // Right click the script in the Scripts tree and select "enable"  
+eval(''+new String(org.apache.tools.ant.util.FileUtils.readFully(new java.io.FileReader(
+                    '/home/user/bin/hacks/zap_scripts/test.js'))));
+
 
 function proxyRequest(msg) {
 	return true
 }
 
 function proxyResponse(msg) {
-	// Debugging can be done using println like this
-	// println('proxyResponse called for url=' + msg.getRequestHeader().toString())
-	responseHeader = msg.getResponseHeader();
-	responseHeader.setMessage(responseHeader.toString()+"\nAccess-Control-Allow-Origin: *\n"+
-		"Access-Control-Allow-Credentials: true\n");
-	println("inject cors");
-
+    body = "<html><head><script>var out = document.getElementById('out');out.innerHTML = '";
+    body += msg.getResponseBody().toString();
+    body += "';</script></head><body><div id='out'></div></body></html>";
+    msg.setResponseBody(body);
+    println(test());
 	return true
 }
+
+
+
