@@ -23,7 +23,7 @@ class SpotifyAdBlocker
                 # next track will be probably an ad
                 # Example: [ad_chooser.cpp:1150] Found ad (time = 663, adclass = '', time left = 30, length = 22)
                 @ad_chooser = true
-                puts 'ad_chooser found' if @debug
+                puts 'ad_chooser found'
             end
             if line.match /index=/
                 # lines with 'index=' indecates a new track
@@ -64,13 +64,13 @@ class SpotifyAdBlocker
             `amixer set Master 0`
             @mute = true
         end
-        puts 'mute' if @debug
+        puts 'mute' 
     end
 
     def unmute_sound()
         `amixer set Master #{@volume}`
         @mute = false
-        puts 'unmute' if @debug
+        puts 'unmute'
     end
 
 end
