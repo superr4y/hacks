@@ -14,7 +14,7 @@ class SpotifyAdBlocker
         @volume = 0
         @mute = false
         @ad_chooser = false
-        @debug = false
+        @debug = true
 
         exec_and_scan cmd do |line|
             puts "### #{line}" if @debug

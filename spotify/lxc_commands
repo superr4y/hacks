@@ -1,0 +1,16 @@
+sudo lxc-execute -n spotify_lxc -f lxc.conf -- export DISPLAY=0; spotify
+
+
+
+ip netns add spotify_ns
+ip link add veth0 type veth peer name veth1
+ip link set veth1 netns spotify_ns
+
+brctl addbr br0
+brctl addif br0 wlp4s0 veth0
+
+ip netns exec spotify_ns ip link list
+ip netns exec spotify_ns ifconfig veth1 10.1.1.1/24 up
+
+
+sudo iw dev wlan1 set 4addr on
