@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-# wtf why is the mother fucker not working?
-
 ns=blue
 vetha=vetha
 vethb=vethb

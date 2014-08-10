@@ -14,7 +14,7 @@ class SpotifyAdBlocker
         @volume = 0
         @mute = false
         @ad_chooser = false
-        @debug = true
+        @debug = false
 
         exec_and_scan cmd do |line|
             puts "### #{line}" if @debug
@@ -75,4 +75,21 @@ class SpotifyAdBlocker
 
 end
 
-SpotifyAdBlocker.new 'sudo strace spotify'
+
+# group => blockify:x:1003:user
+# gshadow => blockify:!::user
+#
+# EDIT to your own group
+gid = 'blockify'
+
+# delete old rules
+`iptables -D OUTPUT -m owner --gid-owner #{gid} -p udp --dport 53 -j ACCEPT`
+`iptables -D OUTPUT -m owner --gid-owner #{gid} -p tcp  --dport 4070 -j ACCEPT`
+`iptables -D OUTPUT -m owner --gid-owner #{gid} -j DROP`
+
+# add rules to block all unnecessary communication
+`iptables -A OUTPUT -m owner --gid-owner #{gid} -p udp --dport 53 -j ACCEPT`
+`iptables -A OUTPUT -m owner --gid-owner #{gid} -p tcp  --dport 4070 -j ACCEPT`
+`iptables -A OUTPUT -m owner --gid-owner #{gid} -j DROP`
+
+SpotifyAdBlocker.new "sg #{gid} -c spotify"
