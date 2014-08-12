@@ -81,6 +81,7 @@ end
 #
 # EDIT to your own group
 gid = 'blockify'
+user = 'user'
 
 # delete old rules
 `iptables -D OUTPUT -m owner --gid-owner #{gid} -p udp --dport 53 -j ACCEPT`
@@ -92,4 +93,4 @@ gid = 'blockify'
 `iptables -A OUTPUT -m owner --gid-owner #{gid} -p tcp  --dport 4070 -j ACCEPT`
 `iptables -A OUTPUT -m owner --gid-owner #{gid} -j DROP`
 
-SpotifyAdBlocker.new "sg #{gid} -c spotify"
+SpotifyAdBlocker.new "sg #{gid} -c 'su #{user} -c spotify'"
