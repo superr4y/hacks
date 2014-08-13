@@ -75,22 +75,34 @@ class SpotifyAdBlocker
 
 end
 
+#a No Ad
+# User-Agent: Spotify-Linux/0.71/91100026
+#
+## maybe ad
+# User-Agent: Mozilla/5.0 Spotify/0.9.11.26
+# User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)
 
 # group => blockify:x:1003:user
 # gshadow => blockify:!::user
 #
 # EDIT to your own group
 gid = 'blockify'
-user = 'user'
 
 # delete old rules
-`iptables -D OUTPUT -m owner --gid-owner #{gid} -p udp --dport 53 -j ACCEPT`
-`iptables -D OUTPUT -m owner --gid-owner #{gid} -p tcp  --dport 4070 -j ACCEPT`
-`iptables -D OUTPUT -m owner --gid-owner #{gid} -j DROP`
+#`iptables -D OUTPUT -m owner --gid-owner #{gid} -p udp --dport 53 -j ACCEPT`
+#`iptables -D OUTPUT -m owner --gid-owner #{gid} -p tcp  --dport 4070 -j ACCEPT`
+#`iptables -D OUTPUT -m owner --gid-owner #{gid} -j DROP`
+#
+## add rules to block all unnecessary communication
+#`iptables -A OUTPUT -m owner --gid-owner #{gid} -p udp --dport 53 -j ACCEPT`
+#`iptables -A OUTPUT -m owner --gid-owner #{gid} -p tcp  --dport 4070 -j ACCEPT`
+#`iptables -A OUTPUT -m owner --gid-owner #{gid} -j DROP`
 
-# add rules to block all unnecessary communication
-`iptables -A OUTPUT -m owner --gid-owner #{gid} -p udp --dport 53 -j ACCEPT`
-`iptables -A OUTPUT -m owner --gid-owner #{gid} -p tcp  --dport 4070 -j ACCEPT`
-`iptables -A OUTPUT -m owner --gid-owner #{gid} -j DROP`
+`iptables -D OUTPUT -m owner --gid-owner #{gid} -p tcp --dport 80 -j DROP`
+`iptables -D OUTPUT -m owner --gid-owner #{gid} -p tcp --dport 443 -j DROP`
 
-SpotifyAdBlocker.new "sg #{gid} -c 'su #{user} -c spotify'"
+`iptables -A OUTPUT -m owner --gid-owner #{gid} -p tcp --dport 80 -j DROP`
+`iptables -A OUTPUT -m owner --gid-owner #{gid} -p tcp --dport 443 -j DROP`
+
+#SpotifyAdBlocker.new "sg #{gid} -c 'su #{user} -c spotify'"
+SpotifyAdBlocker.new "./spotify_wrapper"
