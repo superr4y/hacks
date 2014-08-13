@@ -75,12 +75,7 @@ class SpotifyAdBlocker
 
 end
 
-#a No Ad
-# User-Agent: Spotify-Linux/0.71/91100026
-#
-## maybe ad
-# User-Agent: Mozilla/5.0 Spotify/0.9.11.26
-# User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)
+
 
 # group => blockify:x:1003:user
 # gshadow => blockify:!::user
