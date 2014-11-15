@@ -3,12 +3,15 @@
 # This script checks if dlan or my internet provider is the reason i cant watch porn
 # PS: I hate both of them, they should burn in hell arrrr
 
+# Usage: add a alias to .bashrc
+# alias dlan="python2 ~/bin/hacks/dlan_test/dlan_test.py"
+
 import subprocess
 import re
 import sys
 
 def test_connection(ip):
-    proc = subprocess.Popen(["ping", "-c1", router],stdout=subprocess.PIPE)
+    proc = subprocess.Popen(["ping", "-c1", "-W1", router],stdout=subprocess.PIPE)
     out = proc.stdout.read().rstrip()
     match = re.search(r'(\d) received', out)
     if not match:
