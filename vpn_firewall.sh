@@ -16,6 +16,7 @@ virtual_interface="tun0"
 
 servers=(
 37.0.123.60  # RU Moscow c01
+81.171.107.3 # FR Paris a02
 )
 
 #---------------------------------------------------------------
@@ -29,21 +30,33 @@ iptables -t nat -F
 iptables -t nat -X
 iptables -t mangle -F
 iptables -t mangle -X
+ip6tables -F
 
 if [ "$1" = "clear" ]
 then
     iptables -P INPUT ACCEPT
     iptables -P OUTPUT ACCEPT
+    chattr -i /etc/resolv.conf
     exit
 fi
 
 echo "Setting up new rules..."
+
+# Keep your finger from DNS. I will handel this for you :-P
+chattr -i /etc/resolv.conf
+echo nameserver 8.8.8.8 > /etc/resolv.conf
+echo nameserver 8.8.4.4 >> /etc/resolv.conf
+chattr +i /etc/resolv.conf
+
 #---------------------------------------------------------------
 # Default Policy - Drop anything!
 #---------------------------------------------------------------
 $FW -P INPUT DROP
 $FW -P FORWARD DROP
 $FW -P OUTPUT DROP
+ip6tables -P INPUT DROP
+ip6tables -P FORWARD DROP
+ip6tables -P OUTPUT DROP
 
 #---------------------------------------------------------------
 # Allow all local connections via loopback.
