@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Service
+Icon=knotes
+Actions=ShowTags
+X-KDE-Priority=TopLevel
+ServiceTypes=KonqPopupMenu/Plugin
+MimeType=all/all
+
+[Desktop Action ShowTags]
+Exec=kdialog -msgbox "$(tmsu tags %f)"
+Icon=knotes
+Name=Show Tags

@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Service
+Icon=knotes
+Actions=AddTags
+X-KDE-Priority=TopLevel
+ServiceTypes=KonqPopupMenu/Plugin
+MimeType=all/all
+
+[Desktop Action AddTags]
+Exec=/home/user/bin/hacks/tmsu/tmsu_kde_add_tags.sh %F
+Icon=knotes
+Name=Add Tags
+
