@@ -14,11 +14,12 @@ local_interface1="wlp4s0"
 local_interface2="enp0s25"
 virtual_interface="tun0"
 
-servers=(
-37.0.123.60  # RU Moscow c01
-81.171.107.3 # FR Paris a02
-81.171.56.12 # NL Amsterdam a05
-)
+#servers=(
+#37.0.123.60  # RU Moscow c01
+#81.171.107.3 # FR Paris a02
+#81.171.56.12 # NL Amsterdam a05
+#81.171.56.130
+#)
 
 #---------------------------------------------------------------
 # Remove old rules and tables
@@ -109,12 +110,14 @@ $FW -A OUTPUT -j ACCEPT -o $virtual_interface
 # Connection to AirVPN servers (UDP 443)
 #---------------------------------------------------------------
 
-server_count=${#servers[@]}
-for (( c = 0; c < $server_count; c++ ))
-do
-    $FW -A INPUT  -j ACCEPT -p tcp -s ${servers[c]} --sport 443 -i "$local_interface1"
-    $FW -A OUTPUT -j ACCEPT -p tcp -d ${servers[c]} --dport 443 -o "$local_interface1"
-done
+#server_count=${#servers[@]}
+#for (( c = 0; c < $server_count; c++ ))
+#do
+    #$FW -A INPUT  -j ACCEPT -p tcp -s ${servers[c]} --sport 443 -i "$local_interface1"
+    $FW -A INPUT  -j ACCEPT -p tcp -s "$1" --sport 443 -i "$local_interface1"
+    #$FW -A OUTPUT -j ACCEPT -p tcp -d ${servers[c]} --dport 443 -o "$local_interface1"
+    $FW -A OUTPUT -j ACCEPT -p tcp -d "$1" --dport 443 -o "$local_interface1"
+#done
 
 #---------------------------------------------------------------
 # Log all dropped packages, debug only.
