@@ -18,9 +18,19 @@ echo "[+] IP-Address VPN server is $vpn_ip"
 
 echo "[+] Invoke openvpn with $1"
 openvpn  --config "$1" --auth-user-pass login.conf --writepid openvpn.pid > /dev/zero&
-sleep 20
+sleep 1
 
-ip_tun="$(ip addr show dev tun0 | awk '/inet/ {print $2}' | sed 's/\/..//')"
+
+while :; do
+    ip_tun="$(ip addr show dev tun0 | awk '/inet/ {print $2}' | sed 's/\/..//')"
+    if [ "$ip_tun" = "" ]; then
+        echo "[!] tun0 is not ready yet. Wait 5 secunds and try again..."
+        sleep 5
+    else
+        break
+    fi
+done
+
 echo "[+] IP-Address tun0 is $ip_tun"
 
 echo "[+] Invoke firewall script. Allow only $vpn_ip"
