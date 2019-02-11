@@ -1,25 +1,34 @@
-#!/usr/bin/bash
+#!/bin/sh
 # iptables setup on a local pc
-# dropping all traffic not going trough vpn
+# drops all traffic not going trough vpn
 # allowes traffic in local area network
 # special rules for UPNP and Multicast discovery
 # From: https://airvpn.org/topic/4390-drop-all-traffic-if-vpn-disconnects-with-iptables/
+# UPDATE: update for cryptostorm vpn, use balancer domain to get whitelist of IPs
+
+parse_network() {
+    /bin/ip addr show dev $1 | grep "inet " | sed 's/inet //' | sed 's/ brd.*//'
+}
 
 
 FW="/sbin/iptables"
-LCL1="192.168.0.0/24"
-LCL2="192.168.2.0/24"
-VPN="172.20.24.0/22"
 local_interface1="wlp4s0"
 local_interface2="enp0s25"
 virtual_interface="tun0"
+LCL1=$(parse_network $local_interface1)
+LCL2=$(parse_network $local_interface2)
+VPN=$(parse_network $virtual_interface)
 
-#servers=(
-#37.0.123.60  # RU Moscow c01
-#81.171.107.3 # FR Paris a02
-#81.171.56.12 # NL Amsterdam a05
-#81.171.56.130
-#)
+if [ "$1" != "clear" ]; then
+    IPs=$(dig +short balancer.cstorm.is A)
+fi
+
+
+echo "[+] Found the following networks"
+echo "  $local_interface1: $LCL1"
+echo "  $local_interface2: $LCL2"
+echo "  $virtual_interface: $VPN"
+echo "--------------------------------"
 
 #---------------------------------------------------------------
 # Remove old rules and tables
@@ -92,8 +101,8 @@ $FW -A OUTPUT -j ACCEPT -p udp  --source $LCL1 --destination 239.255.255.250 --d
 
 $FW -A INPUT  -j ACCEPT -s $LCL1 
 $FW -A OUTPUT -j ACCEPT -d $LCL1 
-$FW -A INPUT  -j ACCEPT -s $LCL2 
-$FW -A OUTPUT -j ACCEPT -d $LCL2 
+#$FW -A INPUT  -j ACCEPT -s $LCL2 
+#$FW -A OUTPUT -j ACCEPT -d $LCL2 
 
 
 #---------------------------------------------------------------
@@ -110,13 +119,22 @@ $FW -A OUTPUT -j ACCEPT -o $virtual_interface
 # Connection to AirVPN servers (UDP 443)
 #---------------------------------------------------------------
 
+
+for ip in $IPs; do
+    echo "[+] Allow $ip"
+    $FW -A INPUT  -j ACCEPT -p tcp -s "$ip" --sport 443 -i "$local_interface1"
+    $FW -A INPUT  -j ACCEPT -p udp -s "$ip" --sport 443 -i "$local_interface1"
+    $FW -A OUTPUT -j ACCEPT -p tcp -d "$ip" --dport 443 -o "$local_interface1"
+    $FW -A OUTPUT -j ACCEPT -p udp -d "$ip" --dport 443 -o "$local_interface1"
+done
+
 #server_count=${#servers[@]}
 #for (( c = 0; c < $server_count; c++ ))
 #do
     #$FW -A INPUT  -j ACCEPT -p tcp -s ${servers[c]} --sport 443 -i "$local_interface1"
-    $FW -A INPUT  -j ACCEPT -p tcp -s "$1" --sport 443 -i "$local_interface1"
+     #$FW -A INPUT  -j ACCEPT -p tcp -s "$1" --sport 443 -i "$local_interface1"
     #$FW -A OUTPUT -j ACCEPT -p tcp -d ${servers[c]} --dport 443 -o "$local_interface1"
-    $FW -A OUTPUT -j ACCEPT -p tcp -d "$1" --dport 443 -o "$local_interface1"
+     #$FW -A OUTPUT -j ACCEPT -p tcp -d "$1" --dport 443 -o "$local_interface1"
 #done
 
 #---------------------------------------------------------------
